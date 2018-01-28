@@ -78,11 +78,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AbsorptionBlockBehaviour.cs" />
     <Compile Include="Assets\ActivatePad.cs" />
     <Compile Include="Assets\CharacterController.cs" />
     <Compile Include="Assets\FollowCharacter.cs" />
+    <Compile Include="Assets\GameManager.cs" />
     <Compile Include="Assets\GameView.cs" />
+    <Compile Include="Assets\JumpBlockBehaviour.cs" />
+    <Compile Include="Assets\MagnetBlockBehaviour.cs" />
     <Compile Include="Assets\PlayDrumBox.cs" />
+    <Compile Include="Assets\PulsationLigth.cs" />
+    <Compile Include="Assets\TriggerCube.cs" />
+    <Compile Include="Assets\downScaleBehaviour.cs" />
+    <Compile Include="Assets\waveComponent.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

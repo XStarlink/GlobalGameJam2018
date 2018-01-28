@@ -18,17 +18,15 @@ public class CharacterController : MonoBehaviour {
     private Rigidbody rb;
     private float     currentTime;
     private Vector3 initPos;
-    private Light light;
 
     private float lastX;
-
+    public PulsationLigth pulseLight;
 
 
     // Use this for initialization
     void Start ()
     {
         rb = GetComponent<Rigidbody>();
-        light = GetComponentInChildren<Light>();
         currentTime = 0;
         initPos = transform.position;
         speed = 0;
@@ -39,25 +37,18 @@ public class CharacterController : MonoBehaviour {
     void FixedUpdate()
     {
         Move();
-        ControllLigth();
         ScaleDown(false);
-        Jump(false);
+         Jump(false);
     }
 
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "jumpBlock")
+        if (other.gameObject.tag == "block")
         {
-            Jump(true);
-            AudioSource audio = other.gameObject.GetComponent<AudioSource>();
-            audio.Play();
-        }
-        else if (other.gameObject.tag == "dowsizeBlock")
-        {
-            ScaleDown(true);
-            AudioSource audio = other.gameObject.GetComponent<AudioSource>();
-            audio.Play();
+            pulseLight.Pulse(true);
+
+            other.gameObject.GetComponent<TriggerCube>().TriggerAction(this);
         }
         else if (other.gameObject.tag == "Finish")
         {
@@ -71,24 +62,32 @@ public class CharacterController : MonoBehaviour {
 
     }
 
-    void Jump(bool jump)
+    public void Jump(bool jump)
     {
-        if (currentJumpDist > 0)
+
+     Vector3 vect = transform.position;
+        if (transform.position.x - lastX > 0)
         {
-            Vector3 vect = transform.position;
             currentJumpDist -= transform.position.x - lastX;
-            
+
             if (currentJumpDist > jumpRange / 2)
             {
                 vect.y += jumpForce * (transform.position.x - lastX);
             }
             else
                 vect.y -= jumpForce * (transform.position.x - lastX);
-            if (vect.y < initPos.y)
+            if (vect.y < initPos.y && transform.localScale.y >= 1)
                 vect.y = initPos.y;
+            else if (vect.y < initPos.y)
+            {
+            vect.y = initPos.y - ((1 - transform.localScale.y) / 2);
+
+            }
+            //if ()
             transform.position = vect;
             lastX = transform.position.x;
         }
+      
         if (jump == true)
         {
             currentJumpDist = jumpRange;
@@ -102,19 +101,8 @@ public class CharacterController : MonoBehaviour {
         currentJumpDist = 0;
     }
 
-    void ControllLigth()
-    {
-        if (Input.GetKey("space") && light.range < 200)
-        {
-            light.range *= lightSpeed;
-        }
-        else if (light.range > 10)
-        {
-            light.range -= lightSpeed * 2;
-        }
-    }
 
-    void ScaleDown(bool triggerScaleDown)
+    public void ScaleDown(bool triggerScaleDown)
     {
         if (currentTime > 0)
         {
@@ -130,17 +118,18 @@ public class CharacterController : MonoBehaviour {
             vect.y -= scaleChangeSpeed;
             transform.localScale = vect;
             Vector3 vect2 = transform.position;
-            vect2.y -= scaleChangeSpeed;
+            vect2.y -= scaleChangeSpeed / 4;
             transform.position = vect2;
         }
         else if (currentTime <= 0 && transform.localScale.y  < 1)
         {
-            Vector3 vect = transform.localScale;
+            Debug.Log("trap");
+           Vector3 vect = transform.localScale;
             vect.y += scaleChangeSpeed;
             transform.localScale = vect;
-            Vector3 vect2 = transform.position;
-            vect2.y += scaleChangeSpeed;
-            transform.position = vect2;
+            //Vector3 vect2 = transform.position;
+            //vect2.y -= scaleChangeSpeed + 0.2f;
+            //transform.position = vect2
         }
     }
 
